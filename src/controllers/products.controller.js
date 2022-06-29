@@ -55,7 +55,7 @@ export const createProduct = async (req, res) => {
         sku,
         categoria,
         resumen,
-        precio: precioNumber ,
+        precio,
         status,
         descripcion,
         sizes,
@@ -96,8 +96,6 @@ export const updateProduct = async (req, res) => {
     const {idProduct, precio, descuento} = req.body;
 
     const precioDescuento = descuento ? calcDiscountPrice(precio, descuento) : null
-
-    
 
     const updateProducts = await Products.findByIdAndUpdate(idProduct, {...req.body, precioDescuento: precioDescuento}, {
         new: true
