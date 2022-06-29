@@ -39,7 +39,7 @@ export const getCategoryByUser = async (req, res) => {
 
     const { userId, page = 1, limit = 10} = req.body;
     
-    const count = await Categories.find({userId: userId}).count();
+    const count = await Categories.find({userId: userId}).countDocuments();
     const category = await Categories.find({userId: userId}).sort({createdAt: -1}).limit(limit * 1).skip((page - 1) * limit);
     /* const category = await Categories.find({userId: userId}) */
 
