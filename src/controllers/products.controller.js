@@ -9,10 +9,10 @@ export const getAllProducts = async (req, res) => {
 
 export const getAllProductsByUser = async (req, res) => {
 
-    const { userId, page = 1, limit = 10} = req.body;
+    const { userId, page = 1, limit = 10 } = req.body;
 
-    const count = await Products.find({userId: userId}).count();
-    const products = await Products.find({userId: userId}).sort({createdAt: -1}).limit(limit * 1).skip((page - 1) * limit);
+    const count = await Products.find({ userId: userId }).count();
+    const products = await Products.find({ userId: userId }).sort({ createdAt: -1 }).limit(limit * 1).skip((page - 1) * limit);
 
     res.json({
         status: 'success',
@@ -41,11 +41,17 @@ export const createProduct = async (req, res) => {
 
     const precioDescuento = descuento ? calcDiscountPrice(precio, descuento) : null
 
-    const pathImages = imagenes.map( img => {
-        return saveFile(img)
+    const pathImages = imagenes.map(img => {
+        if (imagenes.length > 0) {
+            return saveFile(img)
+        }
     })
 
-    const pathUrlVideo = saveFile(video) 
+    let pathUrlVideo = {};
+
+    if (Object.entries(video).length != 0) {
+        pathUrlVideo = saveFile(video)
+    }
 
     const newProducts = new Products({
         idUser,
@@ -70,7 +76,7 @@ export const createProduct = async (req, res) => {
         status: 'success',
         data: productSaved
     });
-    
+
 }
 
 export const getProductsById = async (req, res) => {
@@ -78,26 +84,26 @@ export const getProductsById = async (req, res) => {
     const { idProduct } = req.body;
     const products = await Products.findById(idProduct);
 
-    if (products){
+    if (products) {
         res.status(201).json({
             status: 'success',
             data: products
         });
-    } else { 
+    } else {
         res.status(401).json({
             status: 'errorProductNotFound'
         });
     }
 
-  
+
 }
 export const updateProduct = async (req, res) => {
 
-    const {idProduct, precio, descuento} = req.body;
+    const { idProduct, precio, descuento } = req.body;
 
     const precioDescuento = descuento ? calcDiscountPrice(precio, descuento) : null
 
-    const updateProducts = await Products.findByIdAndUpdate(idProduct, {...req.body, precioDescuento: precioDescuento}, {
+    const updateProducts = await Products.findByIdAndUpdate(idProduct, { ...req.body, precioDescuento: precioDescuento }, {
         new: true
     });
 
@@ -108,7 +114,7 @@ export const updateProduct = async (req, res) => {
 }
 export const deleteProduct = async (req, res) => {
 
-    const {idProduct} = req.body
+    const { idProduct } = req.body
 
     const productsDelete = await Products.findByIdAndDelete(idProduct);
 
@@ -127,12 +133,12 @@ const saveFile = (file) => {
     let buffer = Buffer.from(file.base64.split(',')[1], 'base64');
     fs.writeFileSync(path.join(__dirname, filePath), buffer);
     return urlPath
-} 
+}
 
-const calcDiscountPrice =  (precio, descuento) =>  { 
+const calcDiscountPrice = (precio, descuento) => {
     const precioNumber = parseInt(precio)
     const precioDescuento = parseInt(descuento)
-    const result = (1 - precioDescuento/100) * precioNumber;
+    const result = (1 - precioDescuento / 100) * precioNumber;
 
     return result
 }
