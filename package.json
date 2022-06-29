@@ -10,7 +10,7 @@
   "scripts": {
     "build": "babel src --out-dir -d build",
     "dev": "nodemon src/index.js --exec babel-node",
-    "start": "nodemon --experimental-modules --es-module-specifier-resolution=node index.js"
+    "start": "nodemon --experimental-modules --es-module-specifier-resolution=node src/index.js"
   },
   "keywords": [],
   "author": "",
