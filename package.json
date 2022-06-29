@@ -7,7 +7,7 @@
     "node": "14.x"
   },
   "scripts": {
-    "build": "src --out-dir -d build",
+    "build": "babel src --out-dir -d build",
     "dev": "nodemon src/index.js --exec babel-node",
     "start": "node src/index.js"
   },
