@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"name": "api-ecommerce",
+			"path": "."
+		},
+		{
+			"name": "api-dash-interno",
+			"path": "..\\..\\..\\..\\..\\xampp\\htdocs\\api-dash-interno"
+		}
+	],
+	"settings": {}
+}
