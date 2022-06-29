@@ -3,14 +3,13 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "type": "module",
   "engines": {
     "node": "14.x"
   },
   "scripts": {
     "build": "babel src --out-dir -d build",
     "dev": "nodemon src/index.js --exec babel-node",
-    "start": "nodemon --experimental-modules --es-module-specifier-resolution=node src/index.js"
+    "start": "babel-node src/index.js"
   },
   "keywords": [],
   "author": "",
