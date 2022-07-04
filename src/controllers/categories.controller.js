@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
-import Categories from '../models/Categories';
+import Categories from '../models/Category';
+import { saveFile, deleteFile } from '../utils';
 
 
 /* export const getCategories = async (req, res) => {
@@ -11,12 +12,11 @@ export const createCategory = async (req, res) => {
 
     const { userId, categoria, imagen } = req.body
 
-    const noSpaceName = imagen.name.split(" ").join("");
-    
-    const filePath = `../public/uploads/${Date.now()}-${noSpaceName}`;
-    const urlPath = `/uploads/${Date.now()}-${noSpaceName}`;
-    let buffer = Buffer.from(imagen.base64.split(',')[1], 'base64');
+    let urlPath = '';
 
+    if (imagen != "") {
+        urlPath = saveFile(imagen)
+    }
 
     const newCategory = new Categories({
         userId,
@@ -27,8 +27,6 @@ export const createCategory = async (req, res) => {
 
     const categorySaved = await newCategory.save();
 
-    fs.writeFileSync(path.join(__dirname, filePath), buffer);
-
     res.status(200).json({
         status: 'success',
         data: categorySaved
@@ -37,10 +35,10 @@ export const createCategory = async (req, res) => {
 
 export const getCategoryByUser = async (req, res) => {
 
-    const { userId, page = 1, limit = 10} = req.body;
-    
-    const count = await Categories.find({userId: userId}).countDocuments();
-    const category = await Categories.find({userId: userId}).sort({createdAt: -1}).limit(limit * 1).skip((page - 1) * limit);
+    const { userId, page = 1, limit = 10 } = req.body;
+
+    const count = await Categories.find({ userId: userId }).countDocuments();
+    const category = await Categories.find({ userId: userId }).sort({ createdAt: -1 }).limit(limit * 1).skip((page - 1) * limit);
     /* const category = await Categories.find({userId: userId}) */
 
     res.status(201).json({
@@ -52,24 +50,28 @@ export const getCategoryByUser = async (req, res) => {
 }
 
 export const getAllCategoryByUser = async (req, res) => {
-    const { userId } =  req.body;
+    const { userId } = req.body;
 
     console.log("userId is", userId);
-    const categories = await Categories.find({userId: userId});
+    const categories = await Categories.find({ userId: userId });
 
     res.status(201).json({
-            status: 'success',
-            data: categories
-        });
+        status: 'success',
+        data: categories
+    });
 }
 
 export const updateCategory = async (req, res) => {
-    
-    const { idCategory } = req.body;
 
-    console.log("token in header", req.headers);
+    const { idCategory, image } = req.body;
 
-    const updateCategory = await Categories.findByIdAndUpdate(idCategory, req.body, {
+    const pathUrl = typeof image === 'string' ? image : saveFile(image);
+
+
+    const updateCategory = await Categories.findByIdAndUpdate(idCategory, {
+        ...req.body,
+        pathUrl
+    }, {
         new: true
     });
     res.status(201).json({
@@ -81,8 +83,13 @@ export const deleteCategory = async (req, res) => {
 
     const { idCategory } = req.body;
     const categoryDelete = await Categories.findByIdAndDelete(idCategory);
-    res.status(201).json({
-        status: 'success',
-        data: categoryDelete
-    });
+
+    if (categoryDelete) {
+        deleteFile(categoryDelete.pathUrl)
+        res.status(201).json({
+            status: 'success',
+            data: categoryDelete
+        });
+    }
+
 }

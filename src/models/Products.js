@@ -16,7 +16,8 @@ const productSchema = new Schema({
     metas: Array,
     descripcion: String,
     precioDescuento: Number,
-    video: Object
+    video: Object,
+    urlVideo: String
 },
 {
     timestamps: true,

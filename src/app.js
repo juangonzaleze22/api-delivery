@@ -4,6 +4,7 @@ import authRoute from './routes/authentication'
 import UsersRoute from './routes/user'
 import produtctsRoute from './routes/products';
 import categoryRoute from './routes/categories';
+import subcategoryRoute from './routes/subcategories';
 import database from './database'
 
 import cors from 'cors';
@@ -28,6 +29,8 @@ app.use('/api/auth', authRoute);
 app.use('/api/users', UsersRoute);
 app.use('/api/products', produtctsRoute);
 app.use('/api/categories', categoryRoute);
+app.use('/api/subcategories', subcategoryRoute);
+
 
 
 

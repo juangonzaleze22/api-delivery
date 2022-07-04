@@ -1,12 +1,12 @@
 import { Router } from 'express';
 import upload from '../libs/storage';
-import * as categoryController from '../controllers/category.controller';
+import * as categoryController from '../controllers/categories.controller';
 import  {authJwt} from '../middlewares';
 
 
 const router = Router();
 
-router.post('/', [authJwt.verifyToken], categoryController.createCategory)
+router.post('/createCategory', [authJwt.verifyToken], categoryController.createCategory)
 
 /* router.get('/', categoryController.getCategories) */
 

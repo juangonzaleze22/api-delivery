@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import Products from '../models/Products';
+import { calcDiscountPrice, saveFile, deleteFile } from '../utils'
 
 export const getAllProducts = async (req, res) => {
     const products = await Products.find();
@@ -9,10 +10,10 @@ export const getAllProducts = async (req, res) => {
 
 export const getAllProductsByUser = async (req, res) => {
 
-    const { userId, page = 1, limit = 10 } = req.body;
+    const { idUser, page = 1, limit = 10 } = req.body;
 
-    const count = await Products.find({ userId: userId }).count();
-    const products = await Products.find({ userId: userId }).sort({ createdAt: -1 }).limit(limit * 1).skip((page - 1) * limit);
+    const count = await Products.find({ idUser }).countDocuments();
+    const products = await Products.find({ idUser }).sort({ createdAt: -1 }).limit(limit * 1).skip((page - 1) * limit);
 
     res.json({
         status: 'success',
@@ -36,15 +37,14 @@ export const createProduct = async (req, res) => {
         sizes,
         metas,
         descuento,
-        video
+        video,
+        urlVideo
     } = req.body
 
     const precioDescuento = descuento ? calcDiscountPrice(precio, descuento) : null
 
     const pathImages = imagenes.map(img => {
-        if (imagenes.length > 0) {
-            return saveFile(img)
-        }
+        return saveFile(img)
     })
 
     let pathUrlVideo = {};
@@ -55,7 +55,7 @@ export const createProduct = async (req, res) => {
 
     const newProducts = new Products({
         idUser,
-        imagenes: pathImages,
+        imagenes: await pathImages,
         video: pathUrlVideo,
         titulo,
         sku,
@@ -67,7 +67,8 @@ export const createProduct = async (req, res) => {
         sizes,
         metas,
         descuento,
-        precioDescuento: precioDescuento
+        precioDescuento: precioDescuento,
+        urlVideo
     })
 
     const productSaved = await newProducts.save();
@@ -101,11 +102,25 @@ export const updateProduct = async (req, res) => {
 
     const { idProduct, precio, descuento } = req.body;
 
+    const valuateIamages = req.body.imagenes;
+
+    const imagesValues =  valuateIamages.map( img => {
+        const type = typeof img;
+        if (type != 'string') {
+           img = saveFile(img)
+        }
+        return img
+    })
+
     const precioDescuento = descuento ? calcDiscountPrice(precio, descuento) : null
 
-    const updateProducts = await Products.findByIdAndUpdate(idProduct, { ...req.body, precioDescuento: precioDescuento }, {
-        new: true
-    });
+     const updateProducts = await Products.findByIdAndUpdate(idProduct, { 
+        ...req.body,
+         precioDescuento: precioDescuento,  
+         imagenes: imagesValues
+        }, {
+         new: true
+     });
 
     res.status(201).json({
         status: 'success',
@@ -118,27 +133,16 @@ export const deleteProduct = async (req, res) => {
 
     const productsDelete = await Products.findByIdAndDelete(idProduct);
 
+    if (productsDelete) { 
+        productsDelete.imagenes.map(img => { 
+            deleteFile(img)
+        })
+    }
+
     res.status(201).json({
         status: 'success',
         data: productsDelete
     });
 }
 
-/* utils functions */
 
-const saveFile = (file) => {
-    const noSpaceName = file.name.split(" ").join("");
-    const urlPath = `uploads/${Date.now()}-${noSpaceName}`;
-    const filePath = `../public/uploads/${Date.now()}-${noSpaceName}`;
-    let buffer = Buffer.from(file.base64.split(',')[1], 'base64');
-    fs.writeFileSync(path.join(__dirname, filePath), buffer);
-    return urlPath
-}
-
-const calcDiscountPrice = (precio, descuento) => {
-    const precioNumber = parseInt(precio)
-    const precioDescuento = parseInt(descuento)
-    const result = (1 - precioDescuento / 100) * precioNumber;
-
-    return result
-}
