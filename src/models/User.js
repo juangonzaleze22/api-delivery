@@ -4,17 +4,14 @@ import bcrypt from 'bcryptjs';
 const userSchema = new Schema({
     nombre: {
         type: String,
-        required: false
     },
     apellido: {
         type: String,
-        required: false
     },
     nombre_empresa: {
         type: String,
-        required: false
     },
-    foto_empresa: {
+    foto: {
         type: String
     },
     telefono: {
@@ -24,16 +21,13 @@ const userSchema = new Schema({
         type: String,
         required: true
     },
-    direccion: {
-        type: String
+    locacion: { 
+        type: Object, 
     },
-    ciudad: {
-        type: String
+    sexo: { 
+        type: String,
     },
-    estado: {
-        type: String
-    },
-    pais: {
+    fecha_nacimiento: { 
         type: String,
     },
     password: {
