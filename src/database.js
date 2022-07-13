@@ -1,11 +1,11 @@
 import mongoose from 'mongoose';
 
 require('dotenv').config();
-console.log('here...', process.env.MONGODB_URI_LOCAL)
+console.log('here...', 'mongodb://127.0.0.1:27017/ecommerce')
 
 // local mongodb://localhost/api_db;
 
-mongoose.connect(process.env.MONGODB_URI_LOCAL, {
+mongoose.connect('mongodb://127.0.0.1:27017/ecommerce', {
     useNewUrlParser            : true,
     useUnifiedTopology         : true,
     useFindAndModify           : false,
