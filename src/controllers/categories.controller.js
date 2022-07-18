@@ -4,10 +4,18 @@ import Categories from '../models/Category';
 import { saveFile, deleteFile } from '../utils';
 
 
-/* export const getCategories = async (req, res) => {
-    const category = await Categories.find();
-    res.json(category);
-} */
+export const getCategories = async (req, res) => {
+
+    const category = await Categories.find().limit(5);
+
+    res.status(200).json({
+        status: 'success',
+        data: category
+    });
+
+}
+
+
 export const createCategory = async (req, res) => {
 
     const { userId, categoria, imagen } = req.body

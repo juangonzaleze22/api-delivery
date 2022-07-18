@@ -1,11 +1,27 @@
 import fs from 'fs';
 import path from 'path';
 import Products from '../models/Products';
+import Categories from '../models/Category';
+
 import { calcDiscountPrice, saveFile, deleteFile } from '../utils'
 
 export const getAllProducts = async (req, res) => {
-    const products = await Products.find();
-    res.json(products);
+    const { page = 1, limit = 10, category = 'all' } = req.body;
+
+    const categories = await Categories.find({ categoria: category});
+    const idCategory = categories[0]?._id || 'all'
+
+    const count = await Products.find().countDocuments();
+    const products = await Products.find( category == 'all' ? {} : {categoria: idCategory}).sort({ createdAt: -1 }).limit(limit * 1).skip((page - 1) * limit);
+
+    console.log(products)
+
+    res.json({
+        status: 'success',
+        data: products,
+        total: count,
+        limit
+    });
 }
 
 export const getAllProductsByUser = async (req, res) => {

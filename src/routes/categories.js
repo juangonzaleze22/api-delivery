@@ -6,9 +6,9 @@ import  {authJwt} from '../middlewares';
 
 const router = Router();
 
-router.post('/createCategory', [authJwt.verifyToken], categoryController.createCategory)
+router.post('/', categoryController.getCategories)
 
-/* router.get('/', categoryController.getCategories) */
+router.post('/createCategory', [authJwt.verifyToken], categoryController.createCategory)
 
 router.post('/getAllCategoryByUser', [authJwt.verifyToken], categoryController.getAllCategoryByUser)
 
