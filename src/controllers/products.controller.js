@@ -60,7 +60,6 @@ export const createProduct = async (req, res) => {
 
     } = req.body
 
-    const precioDescuento = descuento ? calcDiscountPrice(precio, descuento) : null
 
     const pathImages = imagenes.map(img => {
         return saveFile(img)
@@ -85,7 +84,6 @@ export const createProduct = async (req, res) => {
         descripcion,
         sizes,
         metas,
-        precioDescuento: precioDescuento,
         urlVideo,
         envio,
         textEnvio,
