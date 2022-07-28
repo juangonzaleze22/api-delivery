@@ -8,16 +8,19 @@ const productSchema = new Schema({
     titulo: String,
     sku: String,
     categoria: String,
+    subcategoria: String,
     resumen: String,
     status: String,
-    precio: Number,
-    descuento: Number,
     sizes: Array,
     metas: Array,
     descripcion: String,
     precioDescuento: Number,
     video: Object,
-    urlVideo: String
+    urlVideo: String,
+    envio: Boolean,
+    textEnvio: String,
+    social: Object,
+
 },
 {
     timestamps: true,

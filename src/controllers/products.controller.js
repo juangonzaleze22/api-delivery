@@ -46,15 +46,18 @@ export const createProduct = async (req, res) => {
         titulo,
         sku,
         categoria,
+        subcategoria,
         resumen,
-        precio,
         status,
-        descripcion,
         sizes,
         metas,
         descuento,
         video,
-        urlVideo
+        urlVideo,
+        envio,
+        textEnvio,
+        social
+
     } = req.body
 
     const precioDescuento = descuento ? calcDiscountPrice(precio, descuento) : null
@@ -76,15 +79,17 @@ export const createProduct = async (req, res) => {
         titulo,
         sku,
         categoria,
+        subcategoria,
         resumen,
-        precio,
         status,
         descripcion,
         sizes,
         metas,
-        descuento,
         precioDescuento: precioDescuento,
-        urlVideo
+        urlVideo,
+        envio,
+        textEnvio,
+        social
     })
 
     const productSaved = await newProducts.save();
