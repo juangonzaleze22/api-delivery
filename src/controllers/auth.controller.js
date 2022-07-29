@@ -39,7 +39,7 @@ export const register = async (req, res) => {
     const emailDB = await User.findOne({ email: email })
     console.log(emailDB);
     if (emailDB) {
-        res.status(401).json(
+        res.json(
             {
                 status: 'EmailExist',
                 message: 'Email already exist'
