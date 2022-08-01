@@ -84,3 +84,18 @@ export const validateEmail = async (req, res) => {
     }
 
 }
+
+export const deleteUser = async (req, res) => {
+
+    const { idUser } = req.body;
+
+    const UserDelete = await User.findByIdAndDelete(idUser)
+
+    if(UserDelete) { 
+        res.status(201).json({
+            status: 'success',
+            data: UserDelete
+        });
+    }
+
+}

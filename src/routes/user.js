@@ -13,11 +13,6 @@ router.post('/validateEmail', UserCtrl.validateEmail)
 
 router.post('/updateProfileImage', UserCtrl.updateProfileImage)
 
-
-
-
-
-
-
+router.post('/deleteUser', UserCtrl.deleteUser)
 
 export default router;
