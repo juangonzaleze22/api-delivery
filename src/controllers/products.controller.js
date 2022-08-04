@@ -42,7 +42,6 @@ export const createProduct = async (req, res) => {
 
     const {
         idUser,
-        imagenes,
         titulo,
         sku,
         categoria,
@@ -58,12 +57,21 @@ export const createProduct = async (req, res) => {
         textEnvio,
         social
 
-    } = req.body
+    } = JSON.parse(req.body.product)
 
+    const images = req.files
 
-    const pathImages = imagenes.map(img => {
-        return saveFile(img)
+    console.log("DATAAA", JSON.parse(req.body.product))
+    console.log(images)
+    
+    
+    const pathImages = images.map(img => {
+        const urlPath = `uploads/${img.filename}`;
+        return urlPath
     })
+
+    console.log("Images", pathImages)
+   
 
     let pathUrlVideo = {};
 
@@ -73,7 +81,7 @@ export const createProduct = async (req, res) => {
 
     const newProducts = new Products({
         idUser,
-        imagenes: await pathImages,
+        imagenes: pathImages,
         video: pathUrlVideo,
         titulo,
         sku,
@@ -118,25 +126,31 @@ export const getProductsById = async (req, res) => {
 
 }
 export const updateProduct = async (req, res) => {
+    
+    const product = JSON.parse(req.body.product)
+    const { idProduct } = product;
 
-    const { idProduct, precio, descuento } = req.body;
+    console.log(product);
 
     const valuateIamages = req.body.imagenes;
+    let resultImages = []
 
-    const imagesValues =  valuateIamages.map( img => {
-        const type = typeof img;
-        if (type != 'string') {
-           img = saveFile(img)
-        }
-        return img
-    })
+    if (typeof valuateIamages === 'string'){ 
+        resultImages.push(valuateIamages)
+    }else { 
+       valuateIamages ? resultImages = valuateIamages : [] 
+        const images = req.files;
 
-    const precioDescuento = descuento ? calcDiscountPrice(precio, descuento) : null
+        images?.map(img => {
+            const urlPath = `uploads/${img.filename}`;
+            resultImages.push(urlPath);
+        })
 
-     const updateProducts = await Products.findByIdAndUpdate(idProduct, { 
-        ...req.body,
-         precioDescuento: precioDescuento,  
-         imagenes: imagesValues
+    }
+
+    const updateProducts = await Products.findByIdAndUpdate(idProduct, { 
+        ...product,
+         imagenes: resultImages
         }, {
          new: true
      });
