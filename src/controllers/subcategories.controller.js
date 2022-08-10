@@ -57,19 +57,14 @@ export const getAllSubCategoryByUser = async (req, res) => {
 }
 
 export const getAllSubCategoryByCategory = async (req, res) => {
-    const { userId, idCategory } = req.body;
+    const { userId, idCategory, client } = req.body;
 
-    const subcategories = await Subcategory.find({ userId: userId });
+    const subcategories = await Subcategory.find(client ? null : { userId: userId });
     const resultData = subcategories.filter( sub => sub.categoryId == idCategory )
 
-    if (resultData.length > 0) {
+    if (resultData) {
         res.status(201).json({
             status: 'success',
-            data: resultData
-        });
-    }else{ 
-        res.status(201).json({
-            status: 'noData',
             data: resultData
         });
     }

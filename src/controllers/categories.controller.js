@@ -4,9 +4,11 @@ import Categories from '../models/Category';
 import { saveFile, deleteFile } from '../utils';
 
 
+
+
 export const getCategories = async (req, res) => {
 
-    const category = await Categories.find().limit(5);
+    const category = await Categories.find()
 
     res.status(200).json({
         status: 'success',

@@ -14,7 +14,7 @@ router.post('/createProduct', [upload.array('imagenes')],  productsController.cr
 
 router.post('/getProductById', productsController.getProductsById)
 
-router.post('/updateProduct', [authJwt.verifyToken, upload.array('imagenes') ], productsController.updateProduct)
+router.post('/updateProduct', [upload.array('imagenes') ], productsController.updateProduct)
 
 router.post('/deleteProduct', productsController.deleteProduct)
 

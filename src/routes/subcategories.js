@@ -12,7 +12,7 @@ router.post('/createSubCategory', [authJwt.verifyToken], subCategoryController.c
 
 router.post('/getAllSubCategoryByUser', [authJwt.verifyToken], subCategoryController.getAllSubCategoryByUser)
 
-router.post('/getAllSubCategoryByCategory', [authJwt.verifyToken], subCategoryController.getAllSubCategoryByCategory)
+router.post('/getAllSubCategoryByCategory', subCategoryController.getAllSubCategoryByCategory)
 
 router.post('/getSubCategories', subCategoryController.getSubCategoryByUser)
 
