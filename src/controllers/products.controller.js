@@ -2,26 +2,31 @@ import fs from 'fs';
 import path from 'path';
 import Products from '../models/Products';
 import Categories from '../models/Category';
+import SubCategories from '../models/Subcategory';
+
 
 import { calcDiscountPrice, saveFile, deleteFile } from '../utils'
 
 export const getAllProducts = async (req, res) => {
-    const { page = 1, limit = 10, category = 'all' } = req.body;
+    const { page = 1, limit = 10, category } = req.body;
 
-    const categories = await Categories.find({ categoria: category});
-    const idCategory = categories[0]?._id || 'all'
+    const categories = await Products.find({ categoria: category });
 
     const count = await Products.find().countDocuments();
-    const products = await Products.find( category == 'all' ? {} : {categoria: idCategory}).sort({ createdAt: -1 }).limit(limit * 1).skip((page - 1) * limit);
+    const products = await Products.find(categories ? { categoria: category } : { subcategoria: category })
+        .sort({ createdAt: -1 })
+        .limit(limit * 1)
+        .skip((page - 1) * limit);
 
-    console.log(products)
+    if (products) {
+        res.json({
+            status: 'success',
+            data: products,
+            total: count,
+            limit
+        });
+    }
 
-    res.json({
-        status: 'success',
-        data: products,
-        total: count,
-        limit
-    });
 }
 
 export const getAllProductsByUser = async (req, res) => {
@@ -63,15 +68,15 @@ export const createProduct = async (req, res) => {
 
     console.log("DATAAA", JSON.parse(req.body.product))
     console.log(images)
-    
-    
+
+
     const pathImages = images.map(img => {
         const urlPath = `uploads/${img.filename}`;
         return urlPath
     })
 
     console.log("Images", pathImages)
-   
+
 
     let pathUrlVideo = {};
 
@@ -126,7 +131,7 @@ export const getProductsById = async (req, res) => {
 
 }
 export const updateProduct = async (req, res) => {
-    
+
     const product = JSON.parse(req.body.product)
     const { idProduct } = product;
 
@@ -135,10 +140,10 @@ export const updateProduct = async (req, res) => {
     const valuateIamages = req.body.imagenes;
     let resultImages = []
 
-    if (typeof valuateIamages === 'string'){ 
+    if (typeof valuateIamages === 'string') {
         resultImages.push(valuateIamages)
-    }else { 
-       valuateIamages ? resultImages = valuateIamages : [] 
+    } else {
+        valuateIamages ? resultImages = valuateIamages : []
         const images = req.files;
 
         images?.map(img => {
@@ -148,12 +153,12 @@ export const updateProduct = async (req, res) => {
 
     }
 
-    const updateProducts = await Products.findByIdAndUpdate(idProduct, { 
+    const updateProducts = await Products.findByIdAndUpdate(idProduct, {
         ...product,
-         imagenes: resultImages
-        }, {
-         new: true
-     });
+        imagenes: resultImages
+    }, {
+        new: true
+    });
 
     res.status(201).json({
         status: 'success',
@@ -166,8 +171,8 @@ export const deleteProduct = async (req, res) => {
 
     const productsDelete = await Products.findByIdAndDelete(idProduct);
 
-    if (productsDelete) { 
-        productsDelete.imagenes.map(img => { 
+    if (productsDelete) {
+        productsDelete.imagenes.map(img => {
             deleteFile(img)
         })
     }
