@@ -8,6 +8,10 @@ const router = Router();
 
 router.post('/', productsController.getAllProducts)
 
+router.post('/getProductDiscount', productsController.getProductDiscount)
+
+router.post('/getAllProductsNews', productsController.getAllProductsNews)
+
 router.post('/getAllProductsByUser', [authJwt.verifyToken], productsController.getAllProductsByUser)
 
 router.post('/createProduct', [upload.array('imagenes')],  productsController.createProduct)

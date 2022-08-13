@@ -12,8 +12,10 @@ export const getAllProducts = async (req, res) => {
 
     const categories = await Products.find({ categoria: category });
 
+    const isCategory =  categories.length > 0? true : false
+
     const count = await Products.find().countDocuments();
-    const products = await Products.find(categories ? { categoria: category } : { subcategoria: category })
+    const products = await Products.find(isCategory ? { categoria: category } : { subcategoria: category })
         .sort({ createdAt: -1 })
         .limit(limit * 1)
         .skip((page - 1) * limit);
@@ -28,6 +30,7 @@ export const getAllProducts = async (req, res) => {
     }
 
 }
+
 
 export const getAllProductsByUser = async (req, res) => {
 
@@ -183,4 +186,42 @@ export const deleteProduct = async (req, res) => {
     });
 }
 
+export const getProductDiscount = async (req, res) => {
+    
+    const { limit = 8 } = req.body
+
+    const products = await Products.find().limit(limit * 1);
+
+    const dataReturn = products.filter(product => {
+       return product.sizes.some(size => {
+            if (size.discount){
+                return product  
+            }
+        });
+    })
+
+    if (products) {
+        res.status(200).json({
+            status: 'success',
+            data: dataReturn
+        });
+    }
+
+}
+
+export const getAllProductsNews = async (req, res) => {
+    const { limit = 8 } = req.body
+
+    const products = await Products.find()
+    .limit(limit * 1)
+    .sort({ createdAt: -1 });
+
+    if (products) {
+        res.status(200).json({
+            status: 'success',
+            data: products
+        });
+    }
+
+}
 
