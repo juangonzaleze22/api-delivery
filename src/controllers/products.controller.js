@@ -63,7 +63,8 @@ export const createProduct = async (req, res) => {
         urlVideo,
         envio,
         textEnvio,
-        social
+        social,
+        customSize
 
     } = JSON.parse(req.body.product)
 
@@ -78,7 +79,6 @@ export const createProduct = async (req, res) => {
         return urlPath
     })
 
-    console.log("Images", pathImages)
 
 
     let pathUrlVideo = {};
@@ -103,8 +103,12 @@ export const createProduct = async (req, res) => {
         urlVideo,
         envio,
         textEnvio,
-        social
+        social,
+        customSize
     })
+
+    console.log("Images", newProducts)
+
 
     const productSaved = await newProducts.save();
 
@@ -190,20 +194,21 @@ export const getProductDiscount = async (req, res) => {
     
     const { limit = 8 } = req.body
 
-    const products = await Products.find().limit(limit * 1);
+    const products = await Products.find();
 
-    const dataReturn = products.filter(product => {
+    const dataReturn = products.filter((product, index) => {
        return product.sizes.some(size => {
             if (size.discount){
                 return product  
             }
         });
-    })
+
+    });
 
     if (products) {
         res.status(200).json({
             status: 'success',
-            data: dataReturn
+            data: dataReturn.slice(0, 8)
         });
     }
 

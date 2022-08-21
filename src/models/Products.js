@@ -20,6 +20,7 @@ const productSchema = new Schema({
     envio: Boolean,
     textEnvio: String,
     social: Object,
+    customSize: Boolean
 
 },
 {
