@@ -123,6 +123,9 @@ export const getProductsById = async (req, res) => {
 
     const { idProduct } = req.body;
     const products = await Products.findById(idProduct);
+    const category = await Categories.findById(products.categoria);
+
+    products.nombreCategoria = category.categoria;
 
     if (products) {
         res.status(201).json({

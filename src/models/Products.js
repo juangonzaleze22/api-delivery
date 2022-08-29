@@ -20,8 +20,8 @@ const productSchema = new Schema({
     envio: Boolean,
     textEnvio: String,
     social: Object,
-    customSize: Boolean
-
+    customSize: Boolean,
+    nombreCategoria: String
 },
 {
     timestamps: true,
