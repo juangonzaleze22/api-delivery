@@ -12,7 +12,7 @@ export const getAllProducts = async (req, res) => {
 
     const categories = await Products.find({ categoria: category });
 
-    const isCategory =  categories.length > 0? true : false
+    const isCategory = categories.length > 0 ? true : false
 
     const count = await Products.find().countDocuments();
     const products = await Products.find(isCategory ? { categoria: category } : { subcategoria: category })
@@ -194,15 +194,15 @@ export const deleteProduct = async (req, res) => {
 }
 
 export const getProductDiscount = async (req, res) => {
-    
+
     const { limit = 8 } = req.body
 
     const products = await Products.find();
 
     const dataReturn = products.filter((product, index) => {
-       return product.sizes.some(size => {
-            if (size.discount){
-                return product  
+        return product.sizes.some(size => {
+            if (size.discount) {
+                return product
             }
         });
 
@@ -221,8 +221,8 @@ export const getAllProductsNews = async (req, res) => {
     const { limit = 8 } = req.body
 
     const products = await Products.find()
-    .limit(limit * 1)
-    .sort({ createdAt: -1 });
+        .limit(limit * 1)
+        .sort({ createdAt: -1 });
 
     if (products) {
         res.status(200).json({
@@ -232,4 +232,25 @@ export const getAllProductsNews = async (req, res) => {
     }
 
 }
+
+export const getCategoryForSearch = async (req, res) => {
+    /* const { limit = 8 } = req.body */
+
+    const products = await Products.find()
+    const dataResult = products.map(data => {
+        const { _id, titulo } = data
+        return {
+            _id, titulo
+        }
+    })
+
+    if (products) {
+        res.status(200).json({
+            status: 'success',
+            data: dataResult
+        });
+    }
+
+}
+
 

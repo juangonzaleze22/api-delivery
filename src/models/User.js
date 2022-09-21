@@ -38,6 +38,9 @@ const userSchema = new Schema({
         type: String,
         required: true
     },
+    wishlist: {
+        type: Array
+    },
 }, {
     timestamps: true,
     versionKey: false

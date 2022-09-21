@@ -5,6 +5,7 @@ import UsersRoute from './routes/user'
 import produtctsRoute from './routes/products';
 import categoryRoute from './routes/categories';
 import subcategoryRoute from './routes/subcategories';
+import wishListRoute from './routes/wishlist';
 import cscRoute from './routes/csc';
 
 import database from './database'
@@ -34,6 +35,7 @@ app.use('/api/users', UsersRoute);
 app.use('/api/products', produtctsRoute);
 app.use('/api/categories', categoryRoute);
 app.use('/api/subcategories', subcategoryRoute);
+app.use('/api/wishList', wishListRoute);
 app.use('/api', cscRoute);
 
 

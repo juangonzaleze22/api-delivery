@@ -22,5 +22,8 @@ router.post('/updateProduct', [upload.array('imagenes') ], productsController.up
 
 router.post('/deleteProduct', productsController.deleteProduct)
 
+router.get('/getCategoryForSearch', productsController.getCategoryForSearch)
+
+
 
 export default router;
