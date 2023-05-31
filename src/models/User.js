@@ -2,32 +2,22 @@ import { Schema, model } from 'mongoose';
 import bcrypt from 'bcryptjs';
 
 const userSchema = new Schema({
-    nombre: {
+    name: {
         type: String,
     },
-    apellido: {
+    lastname: {
         type: String,
     },
-    nombre_empresa: {
-        type: String,
+    photo: {
     },
-    foto: {
-        type: String
-    },
-    telefono: {
+    phone: {
         type: String
     },
     email: {
         type: String,
         required: true
     },
-    locacion: { 
-        type: Object, 
-    },
-    sexo: { 
-        type: String,
-    },
-    fecha_nacimiento: { 
+    addres: { 
         type: String,
     },
     password: {
@@ -37,9 +27,6 @@ const userSchema = new Schema({
     rol: {
         type: String,
         required: true
-    },
-    wishlist: {
-        type: Array
     },
 }, {
     timestamps: true,

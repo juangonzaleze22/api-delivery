@@ -1,16 +1,27 @@
 import fs from 'fs';
 import path from 'path';
 
-/* Save file */
-export const saveFile =  (file) => {
-    const noSpaceName = file.name.split(" ").join("");
-    const filePath = `../public/uploads/${Date.now()}-${noSpaceName}`;
-    const urlPath = `uploads/${Date.now()}-${noSpaceName}`;
-    let buffer = Buffer.from(file.base64.split(',')[1], 'base64');
-    fs.writeFileSync(path.join(__dirname, filePath), buffer);
-    return urlPath
-}
+const { promisify } = require("util");
 
+const writeFile = promisify(fs.writeFile);
+
+export const saveFile = async (base64) => {
+    // Obtén la extensión de la imagen desde la cadena base64
+    const extension = base64.split(";")[0].split("/")[1];
+    const timestamp = Date.now();
+  
+    const filePath = `../public/uploads/${timestamp}.${extension}`;
+    const urlPath = `/uploads/${timestamp}.${extension}`;
+  
+    // Convierte la cadena base64 en un buffer de archivos
+    const buffer = Buffer.from(base64.split(",")[1], "base64");
+  
+    // Escribe el archivo en el sistema de archivos
+    await writeFile(path.join(__dirname, filePath), buffer);
+  
+    // Devuelve la URL donde se puede acceder al archivo
+    return await urlPath;
+  };
 /* Delete file */
 export const deleteFile = (url) => {
 

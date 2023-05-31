@@ -1,43 +1,37 @@
 import User from '../models/User';
 import jwt from 'jsonwebtoken';
 import config from '../config';
+import { saveFile } from '../utils'
 
 export const register = async (req, res) => {
     const {
-        nombre,
-        apellido,
-        telefono,
-        foto_empresa,
-        nombre_empresa,
-        foto,
+        name,
+        lastname,
+        phone,
+        photo,
         email,
-        direccion,
-        ciudad,
-        estado,
-        pais,
+        addres,
         password,
         rol,
     } = req.body
 
+    const pathUrl = photo? await saveFile(photo) : '';
+
+    console.log(pathUrl)
 
     const newUser = new User({
-        nombre,
-        apellido,
-        telefono,
-        foto_empresa,
-        nombre_empresa,
-        foto,
+        name,
+        lastname,
+        phone,
+        photo: pathUrl,
         email,
-        direccion,
-        ciudad,
-        estado,
-        pais,
+        addres,
         password: await User.encryptPassword(password, email),
         rol,
     });
 
     const emailDB = await User.findOne({ email: email })
-    console.log(emailDB);
+
     if (emailDB) {
         res.json(
             {
@@ -68,8 +62,6 @@ export const login = async (req, res) => {
 
     const userFound = await User.findOne({ email: req.body.email })
 
-    console.log("USEEEER", userFound);
-
     if (!userFound){
         res.json({
             status: 'EmailNotFound',
@@ -89,7 +81,6 @@ export const login = async (req, res) => {
         const token = jwt.sign({ id: userFound._id }, config.SECRECT, {
             expiresIn: 86400
         });
-        console.log('===>', token);
         res.json({
             status: 'success',
             token: token, 
