@@ -10,7 +10,7 @@ export const saveFile = async (base64) => {
     const extension = base64.split(";")[0].split("/")[1];
     const timestamp = Date.now();
   
-    const filePath = `../public/uploads/${timestamp}.${extension}`;
+    const filePath = `public/uploads/${timestamp}.${extension}`;
     const urlPath = `/uploads/${timestamp}.${extension}`;
   
     // Convierte la cadena base64 en un buffer de archivos
