@@ -32,83 +32,52 @@ export const getAllProducts = async (req, res) => {
 }
 
 
-export const getAllProductsByUser = async (req, res) => {
+export const getAllProductsByBusiness = async (req, res) => {
 
-    const { idUser, page = 1, limit = 10 } = req.body;
+    /* const { idUser, page = 1, limit = 10 } = req.body; */
 
-    const count = await Products.find({ idUser }).countDocuments();
-    const products = await Products.find({ idUser }).sort({ createdAt: -1 }).limit(limit * 1).skip((page - 1) * limit);
+    const { id } = req.params
 
+    const products = await Products.find({idBusiness: id});
+
+    console.log("produtcs", products)
+
+    res.json({
+        status: 'success',
+        data: products,
+    });
+
+    //pagination
+    /* const count = await Products.findById(id).countDocuments();
+    const products = await Products.findById(id).sort({ createdAt: -1 }).limit(limit * 1).skip((page - 1) * limit);
     res.json({
         status: 'success',
         data: products,
         total: count,
         limit
-    });
+    }); */
 }
 export const createProduct = async (req, res) => {
 
     const {
-        idUser,
-        titulo,
-        sku,
-        categoria,
-        subcategoria,
-        resumen,
-        descripcion,
-        status,
-        sizes,
-        metas,
-        video,
-        urlVideo,
-        envio,
-        textEnvio,
-        social,
-        customSize
+        name,
+        description,
+        category,
+        photo,
+        price,
+        idBusiness
+    } = req.body
 
-    } = JSON.parse(req.body.product)
-
-    const images = req.files
-
-    console.log("DATAAA", JSON.parse(req.body.product))
-    console.log(images)
-
-
-    const pathImages = images.map(img => {
-        const urlPath = `uploads/${img.filename}`;
-        return urlPath
-    })
-
-
-
-    let pathUrlVideo = {};
-
-    if (Object.entries(video).length != 0) {
-        pathUrlVideo = saveFile(video)
-    }
+    const pathUrl = photo? await saveFile(photo) : '';
 
     const newProducts = new Products({
-        idUser,
-        imagenes: pathImages,
-        video: pathUrlVideo,
-        titulo,
-        sku,
-        categoria,
-        subcategoria,
-        resumen,
-        status,
-        descripcion,
-        sizes,
-        metas,
-        urlVideo,
-        envio,
-        textEnvio,
-        social,
-        customSize
+        idBusiness,
+        photo: pathUrl,
+        name,
+        description,
+        category,
+        price
     })
-
-    console.log("Images", newProducts)
-
 
     const productSaved = await newProducts.save();
 

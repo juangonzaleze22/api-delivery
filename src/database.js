@@ -5,7 +5,9 @@ console.log('here...', 'mongodb://127.0.0.1:27017/delivery')
 
 // local mongodb://localhost/api_db;
 
-mongoose.connect('mongodb://127.0.0.1:27017/delivery', {
+//mongodb+srv://juangonzaleze04:KP62oIn2vSm4vDxW@api-delivery.clnjwua.mongodb.net/api-delivery?retryWrites=true&w=majority
+
+mongoose.connect('mongodb+srv://juangonzaleze04:KP62oIn2vSm4vDxW@api-delivery.clnjwua.mongodb.net/api-delivery?retryWrites=true&w=majority', {
     useNewUrlParser            : true,
     useUnifiedTopology         : true,
     useFindAndModify           : false,

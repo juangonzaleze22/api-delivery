@@ -12,9 +12,11 @@ router.post('/getProductDiscount', productsController.getProductDiscount)
 
 router.post('/getAllProductsNews', productsController.getAllProductsNews)
 
-router.post('/getAllProductsByUser', [authJwt.verifyToken], productsController.getAllProductsByUser)
+router.get('/getAllProductsByBusiness',  productsController.getAllProductsByBusiness)
 
-router.post('/createProduct', [upload.array('imagenes')],  productsController.createProduct)
+router.get('/getAllProductsByBusiness/:id', productsController.getAllProductsByBusiness)
+
+router.post('/createProduct',  productsController.createProduct)
 
 router.post('/getProductById', productsController.getProductsById)
 

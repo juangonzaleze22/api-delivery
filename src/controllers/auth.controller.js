@@ -10,24 +10,38 @@ export const register = async (req, res) => {
         phone,
         photo,
         email,
-        addres,
+        avenue,
+        street,
+        numberHouse,
         password,
         rol,
+        addressBusiness,
+        birthday,
+        description
+
     } = req.body
+
+    const addres = { 
+        avenue,
+        street,
+        numberHouse
+    }
 
     const pathUrl = photo? await saveFile(photo) : '';
 
-    console.log(pathUrl)
 
     const newUser = new User({
         name,
         lastname,
+        description,
         phone,
         photo: pathUrl,
         email,
         addres,
+        birthday,
         password: await User.encryptPassword(password, email),
         rol,
+        addressBusiness
     });
 
     const emailDB = await User.findOne({ email: email })

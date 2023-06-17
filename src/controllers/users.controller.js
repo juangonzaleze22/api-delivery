@@ -13,6 +13,31 @@ export const getUserById = async (req, res) => {
     res.json(user);
 }
 
+export const getBusiness = async (req, res) => {
+    const users = await User.find({rol: 'BUSINESS'});
+
+    console.log(users)
+
+    res.json({
+        status: 'success',
+        data: users
+    });
+}
+
+export const getBusinesById = async (req, res) => {
+
+    const { id } = req.params;
+
+    const user = await User.findById(id);
+
+    console.log(user)
+
+    res.json({
+        status: 'success',
+        data: user
+    });
+}
+
 
 export const updateUser = async (req, res) => {
 
