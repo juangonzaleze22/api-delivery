@@ -40,8 +40,6 @@ export const getAllProductsByBusiness = async (req, res) => {
 
     const products = await Products.find({idBusiness: id});
 
-    console.log("produtcs", products)
-
     res.json({
         status: 'success',
         data: products,

@@ -9,6 +9,10 @@ router.get('/getUserById', UserCtrl.getUserById)
 
 router.get('/getBusiness', UserCtrl.getBusiness)
 
+router.get('/getPilots', UserCtrl.getPilots)
+
+router.get('/getPilotById/:id', UserCtrl.getBusinesById)
+
 router.get('/getBusinesById/:id', UserCtrl.getBusinesById)
 
 router.post('/updateUser', UserCtrl.updateUser)
@@ -17,6 +21,6 @@ router.post('/validateEmail', UserCtrl.validateEmail)
 
 router.post('/updateProfileImage', UserCtrl.updateProfileImage)
 
-router.post('/deleteUser', UserCtrl.deleteUser)
+router.delete('/deleteUser/:id', UserCtrl.deleteUser)
 
 export default router;
