@@ -24,6 +24,7 @@ export const getBusiness = async (req, res) => {
 
 
 export const getPilots = async (req, res) => {
+
     const pilots = await User.find({ rol: 'PILOT' });
 
     res.json({
@@ -36,8 +37,13 @@ export const getPilots = async (req, res) => {
 export const getBusinesById = async (req, res) => {
 
     const { id } = req.params;
-
     const user = await User.findById(id);
+
+    if (!user) {
+        res.json({
+            status: 'error'
+        });
+    }
 
     res.json({
         status: 'success',
@@ -87,7 +93,7 @@ export const updateUser = async (req, res) => {
         return res.status(200).json(
             {
                 status: 'success',
-                message: "User updated successfully", 
+                message: "User updated successfully",
                 user
             }
         );
@@ -141,6 +147,24 @@ export const deleteUser = async (req, res) => {
         res.status(201).json({
             status: 'success',
             data: UserDelete
+        });
+    }
+
+}
+
+export const changeStatusPilot = async (req, res) => {
+
+    const { id, status } = req.body;
+
+    const user = await User.findById(id);
+
+    user.status = status == 'ACTIVE' ? 'INACTIVE' : 'ACTIVE';
+    await user.save();
+
+    if (user) {
+        res.status(201).json({
+            status: 'success',
+            data: user
         });
     }
 

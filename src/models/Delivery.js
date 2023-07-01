@@ -1,19 +1,21 @@
-import {Schema, model} from 'mongoose';
-import config  from '../config'
+import { Schema, model } from 'mongoose';
+import config from '../config'
 
 const DeliverySchema = new Schema({
     title: String,
     description: String,
-    lat: Number,
-    lon: Number,
-    address: String,
+    coordinates: Array,
     price: String,
-    idUser: String,
-    status: Number
+    user: Object,
+    status: String,
+    pilot: Object,
+    idPilot: String,
+    distance: Number || String,
 },
-{
-    timestamps: true,
-    versionKey: false
-});
+    {
+        timestamps: true,
+        versionKey: false
+    });
+
 
 export default model('deliveries', DeliverySchema);
