@@ -10,7 +10,7 @@ router.get('/', deliveryController.getAllDeliveries)
 
 router.post('/', deliveryController.createDelivery)
 
-router.get('/getAllDeliveriesByUser/:id', [authJwt.verifyToken], deliveryController.getAllDeliveryByUser)
+router.get('/getAllDeliveriesByUser/:id', [authJwt.verifyToken], deliveryController.getAllDeliveriesByUser)
 
 router.get('/getDeliveryByPilot/:id', [authJwt.verifyToken], deliveryController.getDeliveryByPilot)
 

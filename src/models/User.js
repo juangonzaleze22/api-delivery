@@ -40,6 +40,9 @@ const userSchema = new Schema({
     status: {
         type: String
     },
+    addressCoordinates: {
+        type: Array
+    },
 }, {
     timestamps: true,
     versionKey: false

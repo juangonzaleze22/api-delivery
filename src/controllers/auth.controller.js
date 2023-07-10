@@ -18,7 +18,8 @@ export const register = async (req, res) => {
         addressBusiness,
         birthday,
         description,
-        status
+        status,
+        addressCoordinates
 
     } = req.body
 
@@ -43,7 +44,8 @@ export const register = async (req, res) => {
         password: await User.encryptPassword(password, email),
         rol,
         addressBusiness,
-        status
+        status,
+        addressCoordinates
     });
 
     const emailDB = await User.findOne({ email: email })

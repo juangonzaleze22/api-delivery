@@ -11,6 +11,7 @@ const DeliverySchema = new Schema({
     pilot: Object,
     idPilot: String,
     distance: Number || String,
+    products: Array
 },
     {
         timestamps: true,

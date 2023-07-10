@@ -27,7 +27,7 @@ export const getAllDeliveries = async (req, res) => {
 
 export const createDelivery = async (req, res) => {
 
-    const { title, description, coordinates, distance, idUser } = req.body;
+    const { title, description, coordinates, distance, idUser, products } = req.body;
 
     const randomUser = await User.aggregate([
         { $match: { rol: 'PILOT', status: 'ACTIVE' } },
@@ -56,7 +56,8 @@ export const createDelivery = async (req, res) => {
         status,
         idPilot: pilot?._id,
         pilot,
-        distance
+        distance,
+        products
     })
 
     const delvierySaved = await newDelivery.save();
@@ -113,10 +114,10 @@ export const confirmDelivery = async (req, res) => {
     });
 }
  */
-export const getAllDeliveryByUser = async (req, res) => {
+export const getAllDeliveriesByUser = async (req, res) => {
     const { id } = req.params;
 
-    const deliveries = await Delivery.find();
+    const deliveries = await Delivery.find().sort({ createdAt: -1 });
     const filterDeliveries = deliveries.filter(deliveries => deliveries.user._id == id);
 
     res.status(201).json({

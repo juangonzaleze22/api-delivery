@@ -9,7 +9,6 @@ router.get('/getUserById', UserCtrl.getUserById)
 
 router.get('/getBusiness', UserCtrl.getBusiness)
 
-
 router.get('/getPilots', UserCtrl.getPilots)
 
 router.get('/getPilotById/:id', UserCtrl.getBusinesById)
