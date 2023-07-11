@@ -99,21 +99,6 @@ export const confirmDelivery = async (req, res) => {
 
 }
 
-/* export const getCategoryByUser = async (req, res) => {
-
-    const { userId, page = 1, limit = 10 } = req.body;
-
-    const count = await Categories.find({ userId: userId }).countDocuments();
-    const category = await Categories.find({ userId: userId }).sort({ createdAt: -1 }).limit(limit * 1).skip((page - 1) * limit);
-
-    res.status(201).json({
-        status: 'success',
-        data: category,
-        total: count,
-        limit
-    });
-}
- */
 export const getAllDeliveriesByUser = async (req, res) => {
     const { id } = req.params;
 
@@ -127,19 +112,29 @@ export const getAllDeliveriesByUser = async (req, res) => {
 }
 
 export const getDeliveryByPilot = async (req, res) => {
-    const { id } = req.params;
-    const delivery = await Delivery.find({
-        idPilot: id,
-        status: { $ne: 'COMPLETE' }
-    });
+    try {
+        const { id } = req.params;
 
-    console.log(delivery);
+        console.log("id", id)
 
-    res.status(201).json({
-        status: 'success',
-        data: delivery
-    });
-}
+        const delivery = await Delivery.find({
+            idPilot: id,
+            status: STATUS_ORDER.IN_PROCESS,
+        });
+
+        console.log("delivery", delivery);
+
+        res.status(200).json({
+            status: 'success',
+            data: delivery,
+        });
+    } catch (error) {
+        res.status(500).json({
+            status: 'error',
+            message: 'Error retrieving delivery data',
+        });
+    }
+};
 
 
 /* export const updateCategory = async (req, res) => {
@@ -160,6 +155,61 @@ export const getDeliveryByPilot = async (req, res) => {
         data: updateCategory
     });
 } */
+
+export const getAvailableDelivery = async (req, res) => {
+    try {
+        const delivery = await Delivery.aggregate([
+            { $match: { status: 'PENDING' } },
+            { $sample: { size: 1 } }
+        ]);
+
+        if (delivery.length === 0) {
+            return res.status(404).json({
+                status: 'error',
+                message: 'No available deliveries found',
+            });
+        }
+
+        return res.status(200).json({
+            status: 'success',
+            data: delivery[0],
+        });
+    } catch (error) {
+        console.error('Error retrieving available delivery:', error);
+        return res.status(500).json({
+            status: 'error',
+            message: 'Internal server error',
+        });
+    }
+};
+
+export const assignDeliveryToPilot = async (req, res) => {
+    try {
+        const { idUser, idDelivery } = req.body;
+
+        const pilot = await User.findByIdAndUpdate(idUser, { status: 'BUSY' });
+        const delivery = await Delivery.findByIdAndUpdate(idDelivery, {
+            status: STATUS_ORDER.IN_PROCESS,
+            pilot: pilot,
+            idPilot: pilot?._id,
+        });
+
+        await Promise.all([delivery.save(), pilot.save()]);
+
+        res.status(200).json({
+            status: 'success',
+            message: 'Delivery assigned to pilot successfully',
+            data: { delivery, pilot },
+        });
+    } catch (error) {
+        console.error('Error assigning delivery to pilot:', error);
+        res.status(500).json({
+            status: 'error',
+            message: 'Internal server error',
+        });
+    }
+};
+
 
 export const deleteDelivery = async (req, res) => {
 
