@@ -115,8 +115,6 @@ export const getDeliveryByPilot = async (req, res) => {
     try {
         const { id } = req.params;
 
-        console.log("id", id)
-
         const delivery = await Delivery.find({
             idPilot: id,
             status: STATUS_ORDER.IN_PROCESS,

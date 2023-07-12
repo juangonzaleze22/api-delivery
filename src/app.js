@@ -25,12 +25,6 @@ app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.get('/', (req, res) => {
-    res.json({
-        text: 'welcome'
-    });
-});
-
 app.use('/api/auth', authRoute);
 app.use('/api/users', UsersRoute);
 app.use('/api/products', produtctsRoute);
@@ -39,9 +33,5 @@ app.use('/api/subcategories', subcategoryRoute);
 app.use('/api/wishList', wishListRoute);
 app.use('/api', cscRoute);
 app.use('/api/delivery', deliveryRoute);
-
-
-
-
 
 export default app;

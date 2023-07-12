@@ -8,4 +8,7 @@ router.post('/login', authCtrl.login ) ;
 
 router.get('/users', authCtrl.users) ;
 
+router.get('/createAdmin', authCtrl.createAdmin)
+
+
 export default router;
