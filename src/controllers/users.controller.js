@@ -14,7 +14,7 @@ export const getUserById = async (req, res) => {
 }
 
 export const getBusiness = async (req, res) => {
-    const users = await User.find({ rol: 'BUSINESS' });
+    const users = await User.find({ rol: { $in: ['BUSINESS', 'SUPERUSER'] } });
 
     res.json({
         status: 'success',
@@ -165,6 +165,24 @@ export const changeStatusPilot = async (req, res) => {
         res.status(201).json({
             status: 'success',
             data: user
+        });
+    }
+
+}
+
+export const changeImage = async (req, res) => {
+
+    const { id, photo } = req.body;
+    const user = await User.findById(id);
+
+    user.photo = photo ? await saveFile(photo) : null;
+
+    await user.save();
+
+    if (user) {
+        res.status(201).json({
+            status: 'success',
+            pathUrlImage: user.photo
         });
     }
 

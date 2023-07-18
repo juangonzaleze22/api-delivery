@@ -38,7 +38,7 @@ export const getAllProductsByBusiness = async (req, res) => {
 
     const { id } = req.params
 
-    const products = await Products.find({idBusiness: id});
+    const products = await Products.find({ idBusiness: id });
 
     res.json({
         status: 'success',
@@ -66,7 +66,7 @@ export const createProduct = async (req, res) => {
         idBusiness
     } = req.body
 
-    const pathUrl = photo? await saveFile(photo) : '';
+    const pathUrl = photo ? await saveFile(photo) : '';
 
     const newProducts = new Products({
         idBusiness,
@@ -86,13 +86,13 @@ export const createProduct = async (req, res) => {
 
 }
 
-export const getProductsById = async (req, res) => {
+export const getProductById = async (req, res) => {
 
-    const { idProduct } = req.body;
-    const products = await Products.findById(idProduct);
-    const category = await Categories.findById(products.categoria);
+    const { id } = req.params;
 
-    products.nombreCategoria = category.categoria;
+    console.log("productId: ", id)
+
+    const products = await Products.findById(id);
 
     if (products) {
         res.status(201).json({

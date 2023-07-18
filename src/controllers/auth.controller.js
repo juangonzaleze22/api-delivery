@@ -15,11 +15,11 @@ export const register = async (req, res) => {
         numberHouse,
         password,
         rol,
-        addressBusiness,
         birthday,
         description,
         status,
-        addressCoordinates
+        addressCoordinates,
+        business
 
     } = req.body
 
@@ -31,6 +31,13 @@ export const register = async (req, res) => {
 
     const pathUrl = photo ? await saveFile(photo) : '';
 
+    const businessInfo = rol == 'BUSINESS' ?
+        {
+            name,
+            photo: pathUrl,
+            description,
+            addressCoordinates
+        } : null
 
     const newUser = new User({
         name,
@@ -43,9 +50,9 @@ export const register = async (req, res) => {
         birthday,
         password: await User.encryptPassword(password, email),
         rol,
-        addressBusiness,
         status,
-        addressCoordinates
+        addressCoordinates,
+        business: businessInfo
     });
 
     const emailDB = await User.findOne({ email: email })
@@ -118,14 +125,14 @@ export const createAdmin = async (req, res) => {
                 photo: "",
                 email: "admin@gmail.com",
                 address: {
-                  avenue: "7",
-                  street: "2",
-                  numberHouse: "257"
+                    avenue: "7",
+                    street: "2",
+                    numberHouse: "257"
                 },
                 birthday: "1991-09-16",
                 password: await User.encryptPassword("aA123123@", 'admin@gmail.com'),
                 rol: "ADMIN"
-              });
+            });
             await newAdminUser.save();
             console.log('Usuario admin creado exitosamente');
         } else {
@@ -141,6 +148,62 @@ export const createAdmin = async (req, res) => {
 
 }
 
+export const updateProfileBusiness = async (req, res) => {
+    try {
+
+        // Get the user ID from the request
+        const userId = req.params.id;
+
+        // Find the user by their ID in the database
+        const user = await User.findById(userId);
+
+        // Check if the user exists
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Get the input values from the request body
+        const { name, photo, description, addressCoordinates, phone } = req.body;
+
+        let pathPhoto; 
+
+        if (photo) {
+            if (photo.startsWith("/uploads")) {
+                pathPhoto = photo
+            } else {
+                pathPhoto = await saveFile(photo);
+            }
+        } else {
+            pathPhoto = '';
+        }
+
+        // Add the input values to the user's profile
+        user.business = {
+            name,
+            photo: pathPhoto,
+            description,
+            addressCoordinates,
+            phone
+        }
+        user.rol === 'BUSINESS' || 'SUPERUSER';
+
+        // Save the updated user profile
+        const userUpdated = await user.save();
+
+        // Return a success response
+        return res.status(200).json(
+            {
+                message: 'Crated profile business successfully',
+                status: 'success',
+                data: userUpdated
+            }
+        );
+    } catch (error) {
+        // Handle any errors that occur during the process
+        console.error(error);
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+};
 
 export const users = async (req, res) => {
     const users = await User.findById();

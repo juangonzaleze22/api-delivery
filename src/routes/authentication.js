@@ -10,5 +10,7 @@ router.get('/users', authCtrl.users) ;
 
 router.get('/createAdmin', authCtrl.createAdmin)
 
+router.post('/updateProfileBusiness/:id', authCtrl.updateProfileBusiness)
+
 
 export default router;

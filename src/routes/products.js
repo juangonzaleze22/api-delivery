@@ -18,13 +18,15 @@ router.get('/getAllProductsByBusiness/:id', productsController.getAllProductsByB
 
 router.post('/createProduct',  productsController.createProduct)
 
-router.post('/getProductById', productsController.getProductsById)
+router.get('/getProductById/:id', productsController.getProductById)
 
 router.post('/updateProduct', [upload.array('imagenes') ], productsController.updateProduct)
 
 router.post('/deleteProduct', productsController.deleteProduct)
 
 router.get('/getCategoryForSearch', productsController.getCategoryForSearch)
+
+
 
 
 
