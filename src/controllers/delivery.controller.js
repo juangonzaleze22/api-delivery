@@ -8,6 +8,7 @@ import { saveFile, deleteFile } from '../utils';
 const STATUS_ORDER = {
     PENDING: 'PENDING',
     IN_PROCESS: 'IN_PROCESS',
+    WITHDRAW: 'WITHDRAW',
     COMPLETE: 'COMPLETE',
     CANCEL: 'CANCEL'
 }
@@ -29,24 +30,15 @@ export const createDelivery = async (req, res) => {
 
     const { title, description, coordinates, distance, idUser, products } = req.body;
 
-    const randomUser = await User.aggregate([
-        { $match: { rol: 'PILOT', status: 'ACTIVE' } },
-        { $sample: { size: 1 } }
-    ]);
+    const status = STATUS_ORDER.PENDING;
 
-    let pilot = null;
-
-    if (randomUser && randomUser.length > 0) {
-        pilot = randomUser[0];
-        delete pilot.password
-        delete pilot.rol
-        delete pilot.status
-        await User.findByIdAndUpdate(pilot._id, { status: 'BUSY' });
-    }
+    const isReadyProduct = products.length > 0 ? products.map(product => {
+        product.isReady = false
+        return product
+    }) : [];
 
     const userFound = await User.findById(idUser);
     userFound.password = '';
-    const status = pilot ? STATUS_ORDER.IN_PROCESS : STATUS_ORDER.PENDING;
 
     const newDelivery = new Delivery({
         title,
@@ -54,10 +46,8 @@ export const createDelivery = async (req, res) => {
         coordinates,
         user: userFound,
         status,
-        idPilot: pilot?._id,
-        pilot,
         distance,
-        products
+        products: isReadyProduct
     })
 
     const delvierySaved = await newDelivery.save();
@@ -117,10 +107,8 @@ export const getDeliveryByPilot = async (req, res) => {
 
         const delivery = await Delivery.find({
             idPilot: id,
-            status: STATUS_ORDER.IN_PROCESS,
+            status: STATUS_ORDER.WITHDRAW,
         });
-
-        console.log("delivery", delivery);
 
         res.status(200).json({
             status: 'success',
@@ -157,7 +145,7 @@ export const getDeliveryByPilot = async (req, res) => {
 export const getAvailableDelivery = async (req, res) => {
     try {
         const delivery = await Delivery.aggregate([
-            { $match: { status: 'PENDING' } },
+            { $match: { status: STATUS_ORDER.WITHDRAW } },
             { $sample: { size: 1 } }
         ]);
 
@@ -208,6 +196,93 @@ export const assignDeliveryToPilot = async (req, res) => {
     }
 };
 
+export const getProductsDelivery = async (req, res) => {
+    const { id } = req.params;
+
+    const delivery = await Delivery.find();
+
+    const deliveryByBusiness = await delivery.map(delivery => {
+        const matchingProducts = delivery.products.filter(product => product.idBusiness === id && !product.isReady);
+        delivery.products = matchingProducts;
+        return delivery;
+    }).filter(delivery => delivery.products.length > 0 && delivery.status === STATUS_ORDER.PENDING);
+
+    if (deliveryByBusiness) {
+        res.status(201).json({
+            status: 'success',
+            data: deliveryByBusiness
+        });
+    }
+}
+
+export const withdrawProduct = async (req, res) => {
+    const { idBusiness, idDelivery } = req.body;
+
+    try {
+        const delivery = await Delivery.findByIdAndUpdate(
+            idDelivery,
+            {
+                $set: {
+                    "products.$[product].isReady": true,
+                }
+            },
+            {
+                arrayFilters: [
+                    {
+                        "product.isReady": false,
+                        "product.idBusiness": { $in: idBusiness }
+                    }
+                ],
+                new: true
+            }
+        );
+
+        const allProductsReady = delivery.products.every(product => product.isReady === true);
+
+        if (allProductsReady) {
+            const randomUser = await User.aggregate([
+                { $match: { rol: 'PILOT', status: 'ACTIVE' } },
+                { $sample: { size: 1 } }
+            ]);
+
+            let pilot = null;
+
+            if (randomUser && randomUser.length > 0) {
+                pilot = randomUser[0];
+                delete pilot.password;
+                delete pilot.rol;
+                delete pilot.status;
+                await User.findByIdAndUpdate(pilot._id, { status: 'BUSY' });
+
+                delivery.pilot = pilot;
+                delivery.idPilot = pilot._id;
+                delivery.status = STATUS_ORDER.WITHDRAW
+                await delivery.save();
+            }
+
+
+
+            res.status(201).json({
+                status: 'success',
+                message: 'Success! You have successfully assigned a pilot',
+                data: delivery
+            });
+        } else {
+            res.status(200).json({
+                status: 'success',
+                message: 'Product marked as ready',
+                data: delivery
+            });
+        }
+    } catch (error) {
+        res.status(500).json({
+            status: 'error',
+            message: 'An error occurred',
+            error: error.message
+        });
+    }
+};
+
 
 export const deleteDelivery = async (req, res) => {
 
@@ -222,5 +297,15 @@ export const deleteDelivery = async (req, res) => {
             data: deliveryDeleted
         });
     }
+
+}
+
+export const reportDeliveries = async (req, res) => {
+        const deliveries = await Delivery.find({ status: { $in: [STATUS_ORDER.COMPLETE, STATUS_ORDER.CANCEL] } });
+
+        res.status(201).json({
+            status: 'success',
+            data: deliveries
+        });
 
 }

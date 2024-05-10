@@ -20,6 +20,11 @@ router.post('/confirmDelivery', [authJwt.verifyToken], deliveryController.confir
 
 router.post('/assignDeliveryToPilot', [authJwt.verifyToken], deliveryController.assignDeliveryToPilot)
 
+router.get('/getProductsDelivery/:id', [authJwt.verifyToken], deliveryController.getProductsDelivery)
+
+router.post('/withdrawProduct', [authJwt.verifyToken], deliveryController.withdrawProduct)
+
+router.get('/reportDeliveries', [authJwt.verifyToken], deliveryController.reportDeliveries)
 
 router.delete('/:id', [authJwt.verifyToken], deliveryController.deleteDelivery)
 
